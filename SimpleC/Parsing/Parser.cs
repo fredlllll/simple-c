@@ -34,11 +34,11 @@ namespace SimpleC.Parsing
         {
             scopes.Push(new ProgramNode());
 
-            while (!eof())
+            while (!Eof())
             {
-                if (peek() is KeywordToken)
+                if (Peek() is KeywordToken)
                 {
-                    var keyword = (KeywordToken)next();
+                    var keyword = (KeywordToken)Next();
 
                     if (scopes.Count == 1) //we are a top level, the only valid keywords are variable types, starting a variable or function definition
                     {
@@ -46,14 +46,14 @@ namespace SimpleC.Parsing
                         {
                             var varType = keyword.ToVariableType();
                             //it must be followed by a identifier:
-                            var name = readToken<IdentifierToken>();
+                            var name = ReadToken<IdentifierToken>();
                             //so see what it is (function or variable):
-                            Token lookahead = peek();
+                            Token lookahead = Peek();
                             if (lookahead is OperatorToken && (((OperatorToken)lookahead).OperatorType == OperatorType.Assignment) || lookahead is StatementSperatorToken) //variable declaration
                             {
                                 if (lookahead is OperatorToken)
-                                    next(); //skip the "="
-                                scopes.Peek().AddStatement(new VariableDeclarationNode(varType, name.Content, ExpressionNode.CreateFromTokens(readUntilStatementSeperator())));
+                                    Next(); //skip the "="
+                                scopes.Peek().AddStatement(new VariableDeclarationNode(varType, name.Content, ExpressionNode.CreateFromTokens(ReadUntilStatementSeperator())));
                             }
                             else if (lookahead is OpenBraceToken && (((OpenBraceToken)lookahead).BraceType == BraceType.Round)) //function definition
                             {
@@ -61,19 +61,19 @@ namespace SimpleC.Parsing
                                 scopes.Peek().AddStatement(func); //add the function to the old (root) scope...
                                 scopes.Push(func); //...and set it a the new scope!
                                 //Read the argument list
-                                next(); //skip the opening brace
-                                while (!(peek() is CloseBraceToken && ((CloseBraceToken)peek()).BraceType == BraceType.Round)) //TODO: Refactor using readUntilClosingBrace?
+                                Next(); //skip the opening brace
+                                while (!(Peek() is CloseBraceToken && ((CloseBraceToken)Peek()).BraceType == BraceType.Round)) //TODO: Refactor using readUntilClosingBrace?
                                 {
-                                    var argType = readToken<KeywordToken>();
+                                    var argType = ReadToken<KeywordToken>();
                                     if (!argType.IsTypeKeyword)
                                         throw new ParsingException("Expected type keyword!");
-                                    var argName = readToken<IdentifierToken>();
+                                    var argName = ReadToken<IdentifierToken>();
                                     func.AddParameter(new ParameterDeclarationNode(argType.ToVariableType(), argName.Content));
-                                    if (peek() is ArgSeperatorToken) //TODO: Does this allow (int a int b)-style functions? (No arg-seperator!)
-                                        next(); //skip the sperator
+                                    if (Peek() is ArgSeperatorToken) //TODO: Does this allow (int a int b)-style functions? (No arg-seperator!)
+                                        Next(); //skip the sperator
                                 }
-                                next(); //skip the closing brace
-                                var curlyBrace = readToken<OpenBraceToken>();
+                                Next(); //skip the closing brace
+                                var curlyBrace = ReadToken<OpenBraceToken>();
                                 if (curlyBrace.BraceType != BraceType.Curly)
                                     throw new ParsingException("Wrong brace type found!");
                             }
@@ -90,14 +90,14 @@ namespace SimpleC.Parsing
                         {
                             var varType = keyword.ToVariableType();
                             //it must be followed by a identifier:
-                            var name = readToken<IdentifierToken>();
+                            var name = ReadToken<IdentifierToken>();
                             //so see what it is (function or variable):
-                            Token lookahead = peek();
+                            Token lookahead = Peek();
                             if (lookahead is OperatorToken && (((OperatorToken)lookahead).OperatorType == OperatorType.Assignment) || lookahead is StatementSperatorToken) //variable declaration
                             {
                                 if (lookahead is OperatorToken)
-                                    next(); //skip the "="
-                                scopes.Peek().AddStatement(new VariableDeclarationNode(varType, name.Content, ExpressionNode.CreateFromTokens(readUntilStatementSeperator())));
+                                    Next(); //skip the "="
+                                scopes.Peek().AddStatement(new VariableDeclarationNode(varType, name.Content, ExpressionNode.CreateFromTokens(ReadUntilStatementSeperator())));
                             }
                         }
                         else
@@ -105,15 +105,15 @@ namespace SimpleC.Parsing
                             switch (keyword.KeywordType)
                             {
                                 case KeywordType.Return:
-                                    scopes.Peek().AddStatement(new ReturnStatementNode(ExpressionNode.CreateFromTokens(readUntilStatementSeperator())));
+                                    scopes.Peek().AddStatement(new ReturnStatementNode(ExpressionNode.CreateFromTokens(ReadUntilStatementSeperator())));
                                     break;
                                 case KeywordType.If:
-                                    var @if = new IfStatementNode(ExpressionNode.CreateFromTokens(readUntilClosingBrace()));
+                                    var @if = new IfStatementNode(ExpressionNode.CreateFromTokens(ReadUntilClosingBrace()));
                                     scopes.Peek().AddStatement(@if);
                                     scopes.Push(@if);
                                     break;
                                 case KeywordType.While:
-                                    var @while = new WhileLoopNode(ExpressionNode.CreateFromTokens(readUntilClosingBrace()));
+                                    var @while = new WhileLoopNode(ExpressionNode.CreateFromTokens(ReadUntilClosingBrace()));
                                     scopes.Peek().AddStatement(@while);
                                     scopes.Push(@while);
                                     break;
@@ -123,20 +123,20 @@ namespace SimpleC.Parsing
                         }
                     }
                 }
-                else if(peek() is IdentifierToken && scopes.Count > 1) //in nested scope
+                else if(Peek() is IdentifierToken && scopes.Count > 1) //in nested scope
                 {
-                    var name = readToken<IdentifierToken>();
-                    if(peek() is OperatorToken && ((OperatorToken)peek()).OperatorType == OperatorType.Assignment) //variable assignment
+                    var name = ReadToken<IdentifierToken>();
+                    if(Peek() is OperatorToken && ((OperatorToken)Peek()).OperatorType == OperatorType.Assignment) //variable assignment
                     {
-                        next(); //skip the "="
-                        scopes.Peek().AddStatement(new VariableAssingmentNode(name.Content, ExpressionNode.CreateFromTokens(readUntilStatementSeperator())));
+                        Next(); //skip the "="
+                        scopes.Peek().AddStatement(new VariableAssignmentNode(name.Content, ExpressionNode.CreateFromTokens(ReadUntilStatementSeperator())));
                     }
                     else //lone expression (incl. function calls!)
-                        scopes.Peek().AddStatement(ExpressionNode.CreateFromTokens(new[]{name}.Concat(readUntilStatementSeperator()))); //don't forget the name here!
+                        scopes.Peek().AddStatement(ExpressionNode.CreateFromTokens(new[]{name}.Concat(ReadUntilStatementSeperator()))); //don't forget the name here!
                 }
-                else if(peek() is CloseBraceToken)
+                else if(Peek() is CloseBraceToken)
                 {
-                    var brace = readToken<CloseBraceToken>();
+                    var brace = ReadToken<CloseBraceToken>();
                     if (brace.BraceType != BraceType.Curly)
                         throw new ParsingException("Wrong brace type found!");
                     scopes.Pop(); //Scope has been closed!
@@ -151,56 +151,56 @@ namespace SimpleC.Parsing
             return (ProgramNode)scopes.Pop();
         }
 
-        private IEnumerable<Token> readTokenSeqence(params Type[] expectedTypes)
+        private IEnumerable<Token> ReadTokenSeqence(params Type[] expectedTypes)
         {
             foreach (var t in expectedTypes)
             {
-                if (!t.IsAssignableFrom(peek().GetType()))
+                if (!t.IsAssignableFrom(Peek().GetType()))
                     throw new ParsingException("Unexpected token");
-                yield return next();
+                yield return Next();
             }
         }
 
-        private IEnumerable<Token> readUntilClosingBrace()
+        private IEnumerable<Token> ReadUntilClosingBrace()
         {
             //TODO: Only allow round braces, handle nested braces!
-            while (!eof() && !(peek() is CloseBraceToken))
-                yield return next();
-            next(); //skip the closing brace
+            while (!Eof() && !(Peek() is CloseBraceToken))
+                yield return Next();
+            Next(); //skip the closing brace
         }
 
-        private IEnumerable<Token> readUntilStatementSeperator()
+        private IEnumerable<Token> ReadUntilStatementSeperator()
         {
-            while (!eof() && !(peek() is StatementSperatorToken))
-                yield return next();
-            next(); //skip the semicolon
+            while (!Eof() && !(Peek() is StatementSperatorToken))
+                yield return Next();
+            Next(); //skip the semicolon
         }
 
-        private TExpected readToken<TExpected>() where TExpected : Token
+        private TExpected ReadToken<TExpected>() where TExpected : Token
         {
-            if (peek() is TExpected)
-                return (TExpected)next();
+            if (Peek() is TExpected)
+                return (TExpected)Next();
             else
-                throw new ParsingException("Unexpected token " + peek());
+                throw new ParsingException("Unexpected token " + Peek());
         }
 
         [DebuggerStepThrough]
-        private Token peek()
+        private Token Peek()
         {
             //TODO: Check for eof()
             return Tokens[readingPosition];
         }
 
         [DebuggerStepThrough]
-        private Token next()
+        private Token Next()
         {
-            var ret = peek();
+            var ret = Peek();
             readingPosition++;
             return ret;
         }
 
         [DebuggerStepThrough]
-        private bool eof()
+        private bool Eof()
         {
             return readingPosition >= Tokens.Length;
         }

@@ -10,28 +10,15 @@ namespace SimpleC.CodeGeneration
     /// <summary>
     /// Code emitter for SimpleC machine code.
     /// </summary>
-    class CodeEmitter
+    abstract class CodeEmitter
     {
         List<CodeInstruction> emittedCode = new List<CodeInstruction>();
 
-        public void Emit(OpCode code)
-        {
-            Emit(code, 0, 0);
-        }
+        public abstract void ParseAST(AstNode ast);
 
-        public void Emit(OpCode code, byte arg1)
+        public void Emit(CodeInstruction instruction)
         {
-            Emit(code, arg1, 0);
-        }
-
-        public void Emit(OpCode code, byte arg1, byte arg2)
-        {
-            emittedCode.Add(new CodeInstruction() { ByteArg1 = arg1, ByteArg2 = arg2 });
-        }
-
-        public void Emit(OpCode code, short arg)
-        {
-            emittedCode.Add(new CodeInstruction() { ShortArg = arg });
+            emittedCode.Add(instruction);
         }
 
         public CodeInstruction[] GetEmittedCode()

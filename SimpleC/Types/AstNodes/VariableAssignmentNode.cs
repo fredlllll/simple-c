@@ -7,18 +7,15 @@ using System.Threading.Tasks;
 
 namespace SimpleC.Types.AstNodes
 {
-    class VariableAssingmentNode : AstNode
+    class VariableAssignmentNode : AstNode
     {
         public string VariableName { get; private set; }
         public ExpressionNode ValueExpression { get; private set; }
 
-        public VariableAssingmentNode(string name, ExpressionNode expr)
+        public VariableAssignmentNode(string name, ExpressionNode expr)
         {
-            if (expr == null)
-                throw new ParsingException("The assinged expression may not be null!");
-
             VariableName = name;
-            ValueExpression = expr;
+            ValueExpression = expr ?? throw new ParsingException("The assinged expression may not be null!");
         }
     }
 }

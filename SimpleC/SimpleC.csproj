@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SimpleC</RootNamespace>
     <AssemblyName>SimpleC</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,11 +43,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGeneration\CodeEmitter.cs" />
+    <Compile Include="MuchAssemblyRequired\CodeEmitter.cs" />
     <Compile Include="EnumExtensions.cs" />
-    <Compile Include="Excecution\Excecutor.cs" />
+    <Compile Include="Excecution\Executor.cs" />
     <Compile Include="Excecution\InvalidOpCodeException.cs" />
     <Compile Include="Lexing\CharType.cs" />
     <Compile Include="Lexing\Tokenizer.cs" />
+    <Compile Include="MuchAssemblyRequired\ImmediateInsArg.cs" />
+    <Compile Include="MuchAssemblyRequired\Instruction.cs" />
+    <Compile Include="MuchAssemblyRequired\InstructionArg.cs" />
+    <Compile Include="MuchAssemblyRequired\StringInsArg.cs" />
+    <Compile Include="SimpleC\SimpleCInstruction.cs" />
     <Compile Include="Types\AstNodes\BinaryOperationNode.cs" />
     <Compile Include="Types\AstNodes\ExpressionOperationType.cs" />
     <Compile Include="Parsing\ExpressionParser.cs" />
@@ -66,7 +73,7 @@
     <Compile Include="Types\AstNodes\ReturnStatementNode.cs" />
     <Compile Include="Types\AstNodes\StatementSequenceNode.cs" />
     <Compile Include="Types\AstNodes\UnaryOperationNode.cs" />
-    <Compile Include="Types\AstNodes\VariableAssingmentNode.cs" />
+    <Compile Include="Types\AstNodes\VariableAssignmentNode.cs" />
     <Compile Include="Types\AstNodes\VariableDeclarationNode.cs" />
     <Compile Include="Types\AstNodes\VariableReferenceExpressionNode.cs" />
     <Compile Include="Types\AstNodes\WhileLoopNode.cs" />

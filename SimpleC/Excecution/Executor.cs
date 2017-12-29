@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleC.SimpleC;
 
 namespace SimpleC.Excecution
 {
     /// <summary>
     /// Excecutor vor SimpleC machine code.
     /// </summary>
-    class Excecutor
+    class Executor
     {
         private const int DEFAULT_MEMORY_SIZE = 1000; //1k Cells = 4kB Memory
 
@@ -20,13 +21,13 @@ namespace SimpleC.Excecution
         private int heapPointer;
         private int framePointer;
         private int extremePointer; //TODO: Needed?
-        private CodeInstruction[] code;
+        private SimpleCInstruction[] code;
 
-        public Excecutor(CodeInstruction[] code)
+        public Executor(SimpleCInstruction[] code)
             : this(code, 0)
         { }
 
-        public Excecutor(CodeInstruction[] code, int memorySize)
+        public Executor(SimpleCInstruction[] code, int memorySize)
         {
             if (memorySize < 0)
                 throw new ArgumentOutOfRangeException("Negative memory size given", "memorySize");
@@ -53,16 +54,16 @@ namespace SimpleC.Excecution
             framePointer = 0;
             extremePointer = 0;
 
-            CodeInstruction instrunction = code[0];
+            SimpleCInstruction instruction = code[0];
 
-            while (instrunction.OpCode != OpCode.Halt)
+            while (instruction.OpCode != OpCode.Halt)
             {
-                exceuteInstruction(instrunction);
+                ExecuteInstruction(instruction);
                 programCounter++;
             }
         }
 
-        private void exceuteInstruction(CodeInstruction instr)
+        private void ExecuteInstruction(SimpleCInstruction instr)
         {
             //Genrally: Not much operand checking is done here (as in a real hardware)
             //if some args are wrong, the behavoir is not defined.

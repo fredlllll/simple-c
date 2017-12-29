@@ -9,6 +9,6 @@ namespace SimpleC.Types
 {
     abstract class AstNode
     {
-        abstract void EmitCode(CodeEmitter emitter);
+        //abstract void EmitCode(CodeEmitter emitter);
     }
 }
